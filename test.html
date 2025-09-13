@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste FlashStudy</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        button { margin: 5px; padding: 10px; }
+        .flashcard { width: 300px; height: 200px; border: 2px solid #333; margin: 10px; }
+        .flipped { background: #f0f0f0; }
+        .hidden { display: none; }
+        .notification { padding: 10px; margin: 5px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="hidden">
+        <div>Carregando...</div>
+    </div>
+
+    <!-- App Container -->
+    <div id="app">
+        <h1>Teste das Funções FlashStudy</h1>
+    
+    <div class="test-section">
+        <h2>Teste de Sessão de Estudo</h2>
+        <button onclick="testStartSession()">Iniciar Sessão de Teste</button>
+        <button onclick="testFlipCard()">Virar Card</button>
+        <button onclick="testNextCard()">Próximo Card</button>
+        <button onclick="testPrevCard()">Card Anterior</button>
+        <button onclick="testShuffle()">Embaralhar</button>
+        <button onclick="testRestart()">Reiniciar</button>
+        <button onclick="testFinish()">Finalizar</button>
+        <button onclick="checkSessionState()">Verificar Estado</button>
+    </div>
+
+    <!-- Study Session Elements (hidden by default) -->
+    <div id="study-session" class="hidden">
+        <div class="test-section">
+            <h2>Sessão de Estudo Ativa</h2>
+            <button id="back-to-selection">← Voltar</button>
+            <button id="flip-card">🔄 Virar</button>
+            <button id="prev-card">← Anterior</button>
+            <button id="next-card">Próximo →</button>
+            <button id="shuffle-cards">🔀 Embaralhar</button>
+            <button id="restart-session">🔄 Reiniciar</button>
+            <button id="finish-session">✅ Finalizar</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Card de Teste</h2>
+        <div id="flashcard" class="flashcard" style="display: none;">
+            <div id="question-content">Pergunta de teste</div>
+            <div id="answer-content">Resposta de teste</div>
+        </div>
+        <div id="current-card">1</div> de <div id="total-cards">3</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Logs</h2>
+        <div id="logs" style="background: #f5f5f5; padding: 10px; height: 200px; overflow-y: auto;"></div>
+    </div>
+    </div>
+
+    <!-- Notifications Container -->
+    <div id="notifications"></div>
+
+    <!-- Additional required elements -->
+    <div id="theme-toggle" style="display: none;"></div>
+    <div id="create-deck-btn" style="display: none;"></div>
+    <div id="save-deck" style="display: none;"></div>
+    <div id="card-form" style="display: none;"></div>
+    <div id="validate-csv" style="display: none;"></div>
+    <div id="import-cards" style="display: none;"></div>
+    <div id="csv-file" style="display: none;"></div>
+    <div id="card-question" style="display: none;"></div>
+    <div id="card-answer" style="display: none;"></div>
+    <div id="deck-name" style="display: none;"></div>
+    <div id="deck-description" style="display: none;"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Override console.log to show in the page
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const logsDiv = document.getElementById('logs');
+            logsDiv.innerHTML += args.join(' ') + '<br>';
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        };
+
+        // Test functions
+        function testStartSession() {
+            console.log('=== TESTE: Iniciando Sessão ===');
+            if (window.app) {
+                // Create a test deck
+                const testDeck = {
+                    id: 'test-deck',
+                    name: 'Deck de Teste',
+                    cards: [
+                        { question: 'Pergunta 1', answer: 'Resposta 1' },
+                        { question: 'Pergunta 2', answer: 'Resposta 2' },
+                        { question: 'Pergunta 3', answer: 'Resposta 3' }
+                    ]
+                };
+                
+                // Ensure decks array exists
+                if (!app.decks) {
+                    app.decks = [];
+                }
+                app.decks = [testDeck];
+                
+                console.log('Deck criado:', testDeck);
+                console.log('Iniciando sessão de estudo...');
+                app.startStudySession('test-deck');
+                
+                // Show the study session
+                const studySession = document.getElementById('study-session');
+                if (studySession) {
+                    studySession.classList.remove('hidden');
+                }
+                
+                // Show the flashcard
+                const flashcard = document.getElementById('flashcard');
+                if (flashcard) {
+                    flashcard.style.display = 'block';
+                }
+            } else {
+                console.log('App não encontrado!');
+            }
+        }
+
+        function testFlipCard() {
+            console.log('=== TESTE: Virar Card ===');
+            if (window.app) {
+                app.flipCard();
+            } else {
+                console.log('App não encontrado!');
+            }
+        }
+
+        function testNextCard() {
+            console.log('=== TESTE: Próximo Card ===');
+            if (window.app) {
+                app.nextCard();
+            } else {
+                console.log('App não encontrado!');
+            }
+        }
+
+        function testPrevCard() {
+            console.log('=== TESTE: Card Anterior ===');
+            if (window.app) {
+                app.previousCard();
+            } else {
+                console.log('App não encontrado!');
+            }
+        }
+
+        function testShuffle() {
+            console.log('=== TESTE: Embaralhar ===');
+            if (window.app) {
+                app.shuffleCards();
+            } else {
+                console.log('App não encontrado!');
+            }
+        }
+
+        function testRestart() {
+            console.log('=== TESTE: Reiniciar ===');
+            if (window.app) {
+                app.restartSession();
+            } else {
+                console.log('App não encontrado!');
+            }
+        }
+
+        function testFinish() {
+            console.log('=== TESTE: Finalizar ===');
+            if (window.app) {
+                app.finishSession();
+            } else {
+                console.log('App não encontrado!');
+            }
+        }
+
+        function checkSessionState() {
+            console.log('=== VERIFICAR ESTADO DA SESSÃO ===');
+            if (window.app) {
+                console.log('Study session:', app.studySession);
+                console.log('Current view:', app.currentView);
+                console.log('Decks:', app.decks);
+            } else {
+                console.log('App não encontrado!');
+            }
+        }
+
+        // Wait for app to load
+        window.addEventListener('load', () => {
+            console.log('Página carregada, aguardando app...');
+            setTimeout(() => {
+                if (window.app) {
+                    console.log('App carregado com sucesso!');
+                } else {
+                    console.log('App não foi carregado!');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

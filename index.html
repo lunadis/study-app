@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="Aplicativo de flashcards para estudos - PWA instalável">
+    <title>FlashStudy - Aplicativo de Flashcards</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FlashStudy">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-icon">📚</div>
+            <h2>FlashStudy</h2>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Install Banner -->
+    <div id="install-banner" class="install-banner hidden">
+        <div class="install-content">
+            <span>📱 Instale o FlashStudy no seu dispositivo!</span>
+            <div class="install-buttons">
+                <button id="install-button" class="btn-primary">Instalar</button>
+                <button id="dismiss-install" class="btn-secondary">Depois</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div id="app" class="app-container hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <span class="app-icon">📚</span>
+                    FlashStudy
+                </h1>
+                <div class="header-actions">
+                    <button id="theme-toggle" class="btn-icon" aria-label="Alternar tema">
+                        🌙
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <button class="nav-item active" data-view="decks">
+                📚 Decks
+            </button>
+            <button class="nav-item" data-view="study">
+                🎯 Estudar
+            </button>
+            <button class="nav-item" data-view="stats">
+                📊 Estatísticas
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Decks View -->
+            <section id="decks-view" class="view active">
+                <div class="view-header">
+                    <h2>Meus Decks</h2>
+                    <button id="create-deck-btn" class="btn-primary">
+                        ➕ Novo Deck
+                    </button>
+                </div>
+
+                <div id="decks-grid" class="decks-grid">
+                    <!-- Decks will be rendered here -->
+                </div>
+
+                <div id="empty-decks" class="empty-state hidden">
+                    <div class="empty-icon">📚</div>
+                    <h3>Nenhum deck encontrado</h3>
+                    <p>Crie seu primeiro deck para começar a estudar!</p>
+                    <button class="btn-primary">Criar Primeiro Deck</button>
+                </div>
+            </section>
+
+            <!-- Study View -->
+            <section id="study-view" class="view">
+                <div id="deck-selection" class="deck-selection">
+                    <div class="view-header">
+                        <h2>Selecionar Deck</h2>
+                    </div>
+                    <div id="study-decks-grid" class="decks-grid">
+                        <!-- Study decks will be rendered here -->
+                    </div>
+                </div>
+
+                <div id="study-session" class="study-session hidden">
+                    <div class="study-header">
+                        <button id="back-to-selection" class="btn-icon">
+                            ← Voltar
+                        </button>
+                        <div class="study-progress">
+                            <span id="current-card">1</span> de <span id="total-cards">10</span>
+                        </div>
+                        <button id="shuffle-cards" class="btn-icon" title="Embaralhar">
+                            🔀
+                        </button>
+                    </div>
+
+                    <div class="flashcard-container">
+                        <div id="flashcard" class="flashcard" 
+                             tabindex="0" 
+                             role="button" 
+                             aria-label="Flashcard - clique para revelar resposta"
+                             title="Clique para revelar a resposta">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="card-content" id="question-content">
+                                        <!-- Question will be here -->
+                                    </div>
+                                    <div class="card-footer">
+                                        <span class="card-hint">Clique para revelar a resposta</span>
+                                    </div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="card-content" id="answer-content">
+                                        <!-- Answer will be here -->
+                                    </div>
+                                    <div class="card-footer">
+                                        <span class="card-hint">Clique para ver a pergunta</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="study-controls">
+                        <button id="prev-card" class="btn-control">
+                            ← Anterior
+                        </button>
+                        <button id="flip-card" class="btn-primary">
+                            🔄 Virar
+                        </button>
+                        <button id="next-card" class="btn-control">
+                            Próximo →
+                        </button>
+                    </div>
+
+                    <div class="study-actions">
+                        <button id="restart-session" class="btn-secondary">
+                            🔄 Reiniciar
+                        </button>
+                        <button id="finish-session" class="btn-outline">
+                            ✅ Finalizar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats View -->
+            <section id="stats-view" class="view">
+                <div class="view-header">
+                    <h2>Estatísticas</h2>
+                </div>
+                <div id="stats-content" class="stats-content">
+                    <!-- Stats will be rendered here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Create/Edit Deck Modal -->
+    <div id="deck-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="deck-modal-title">Novo Deck</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="deck-form">
+                    <div class="form-group">
+                        <label for="deck-name">Nome do Deck</label>
+                        <input type="text" id="deck-name" required maxlength="50" 
+                               placeholder="Ex: Inglês Básico">
+                        <div class="form-feedback" id="deck-name-feedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="deck-description">Descrição (opcional)</label>
+                        <textarea id="deck-description" rows="3" maxlength="200"
+                                  placeholder="Descreva o conteúdo deste deck..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="save-deck" class="btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Cards Modal -->
+    <div id="cards-modal" class="modal-overlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3 id="cards-modal-title">Gerenciar Flashcards</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="cards-tabs">
+                    <button class="tab-btn active" data-tab="manual">Manual</button>
+                    <button class="tab-btn" data-tab="import">Importar CSV</button>
+                    <button class="tab-btn" data-tab="list">Lista (0)</button>
+                </div>
+
+                <!-- Manual Tab -->
+                <div id="manual-tab" class="tab-content active">
+                    <form id="card-form">
+                        <div class="form-group">
+                            <label for="card-question">Pergunta</label>
+                            <textarea id="card-question" required maxlength="500"
+                                      placeholder="Digite a pergunta..." rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="card-answer">Resposta</label>
+                            <textarea id="card-answer" required maxlength="500"
+                                      placeholder="Digite a resposta..." rows="3"></textarea>
+                        </div>
+                        <div class="card-preview" id="card-preview" style="display: none;">
+                            <h4>Preview:</h4>
+                            <div class="preview-card">
+                                <div class="preview-question" id="preview-question"></div>
+                                <div class="preview-answer" id="preview-answer"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">➕ Adicionar Flashcard</button>
+                    </form>
+                </div>
+
+                <!-- Import Tab -->
+                <div id="import-tab" class="tab-content">
+                    <div class="import-instructions">
+                        <h4>📋 Formato CSV</h4>
+                        <p>Use o formato: <code>pergunta,resposta</code> (uma linha por flashcard)</p>
+                        <div class="csv-example">
+                            <strong>Exemplo:</strong><br>
+                            <code>
+                                O que é JavaScript?,Uma linguagem de programação<br>
+                                Capital do Brasil?,Brasília<br>
+                                2 + 2 = ?,4
+                            </code>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="csv-file">Arquivo CSV</label>
+                        <input type="file" id="csv-file" accept=".csv,.txt">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="csv-text">Ou cole o texto:</label>
+                        <textarea id="csv-text" rows="10" 
+                                  placeholder="pergunta1,resposta1&#10;pergunta2,resposta2&#10;pergunta3,resposta3"></textarea>
+                    </div>
+
+                    <div class="import-actions">
+                        <button id="validate-csv" class="btn-secondary">🔍 Validar</button>
+                        <button id="import-cards" class="btn-primary" disabled>📥 Importar</button>
+                    </div>
+
+                    <div id="import-preview" class="import-preview" style="display: none;">
+                        <!-- Import preview will be shown here -->
+                    </div>
+                </div>
+
+                <!-- List Tab -->
+                <div id="list-tab" class="tab-content">
+                    <div id="cards-list" class="cards-list">
+                        <!-- Cards list will be rendered here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h3 id="confirm-title">Confirmar</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="confirm-action" class="btn-danger">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Notifications -->
+    <div id="notifications" class="notifications"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
