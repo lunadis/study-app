@@ -1,0 +1,13 @@
+{
+  "name": "flashstudy-app",
+  "version": "1.0.0",
+  "description": "FlashStudy - Aplicativo de Flashcards",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'Static files ready'"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+}

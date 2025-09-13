@@ -1,0 +1,13 @@
+node_modules
+.git
+.gitignore
+README.md
+test.html
+src/
+vite.config.ts
+tsconfig.*.json
+postcss.config.js
+tailwind.config.js
+eslint.config.js
+package.json
+package-lock.json
