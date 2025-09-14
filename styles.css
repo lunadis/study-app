@@ -376,6 +376,7 @@ body {
   width: 100%;
 }
 
+
 .view {
   display: none;
   animation: fadeIn var(--transition-normal);
@@ -742,6 +743,8 @@ button:disabled {
 
 /* Flashcard */
 .flashcard-container {
+  height: auto;
+  min-height: 200px;
   display: flex;
   justify-content: center;
   margin-bottom: var(--space-4);
@@ -752,6 +755,7 @@ button:disabled {
   width: 100%;
   max-width: 500px;
   height: 300px;
+  min-height: 100%;
   position: relative;
   cursor: pointer;
   transition: transform var(--transition-fast);
@@ -1379,6 +1383,16 @@ button:disabled {
   background: var(--surface-variant);
   color: var(--text-primary);
 }
+
+/* Mobile hiddin elements */
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none;
+  }
+  
+}
+
 
 /* Responsive Design */
 
