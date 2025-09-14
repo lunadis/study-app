@@ -1836,6 +1836,7 @@ let app;
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   app = new FlashStudyApp();
+  window.app = app
 });
 
 // Handle unload to save data
